@@ -26,11 +26,12 @@ class Animation(fantas.Ui):
     def next_frame(self):
         self.current_frame += 1
         if self.current_frame >= self.length:
-            self.current_frame = 0
             if self.loop > 0:
                 self.loop -= 1
                 if self.loop == 0:
                     self.stop()
+                    return
+            self.current_frame = 0
         self.img = self.img_queue[self.current_frame][0]
         self.mark_update()
 

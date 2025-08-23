@@ -9,6 +9,11 @@ import fantas
 from fantas import uimanager as u
 import pygame
 
+import pool
+def load_font():
+    u.fonts = fantas.load_res_group("./assets/fonts/")
+_font = pool.POOL.submit(load_font)
+
 import colors
 import textstyle
 
@@ -22,18 +27,24 @@ elif screen_size[0] > 1280 and screen_size[1] > 720:
     screen_size = (1280, 720)
 else:
     screen_size = (1120, 630)
+
+
 u.init("感应线圈传感器", screen_size, borderless=True, resizable=True)
 
-u.fonts = fantas.load_res_group(Path("./assets/fonts/").iterdir())
-
 u.root = fantas.Root(colors.LIGHTBLUE1)
+
+title_ani = None
+def load_start_ani():
+    global title_ani
+    title_ani = fantas.Animation("./assets/ani/title.webp", center=(u.window.size[0] / 2, u.window.size[1] / 2))
+    title_ani.join_to(u.root, 0)
+    title_ani.bind_stop_callback(title_ani.leave)
+    title_ani.play(1)
+pool.POOL.submit(load_start_ani)
+
+_font.result()
 title_bar = title_bar.TitleBar()
 title_bar.join(u.root)
-
-title_ani = fantas.Animation("./assets/ani/title.webp", center=(u.window.size[0] / 2, u.window.size[1] / 2))
-title_ani.join(u.root)
-title_ani.bind_stop_callback(title_ani.leave)
-title_ani.play(1)
 
 title_text = fantas.Text("EICS", u.fonts['maplemono'], textstyle.TITLE_TEXT, center=(u.window.size[0] / 2, u.window.size[1] / 2))
 title_text.join(u.root)
@@ -47,7 +58,7 @@ connect_bar = connect_bar.ConnectBar()
 connect_bar.join_to(u.root, 0)
 tt_size_kf.bind_endupwith(connect_bar.appear)
 
-fantas.Trigger(tt_alpha_kf.launch).launch(150)
+fantas.Trigger(tt_alpha_kf.launch).launch(180)
 
 def title_text_return():
     tt_size_kf.launch()

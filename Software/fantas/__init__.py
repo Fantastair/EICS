@@ -5,7 +5,9 @@ os.environ['SDL_VIDEO_ALLOW_SCREENSAVER'] = '1'             # 允许屏幕保护
 os.environ['SDL_WINDOWS_DPI_AWARENESS'] = 'permonitorv2'    # 启用每个监视器（V2）的 DPI 感知
 del os
 import pygame
+import pygame.freetype
 pygame.init()
+pygame.freetype.init()
 del pygame
 
 from .resource import *
