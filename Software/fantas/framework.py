@@ -70,7 +70,6 @@ class UiManager:
                 # if event.type != pygame.MOUSEMOTION:
                 #     print(event)
                 if event.type == pygame.QUIT:
-                    self.quit()
                     return
                 elif event.type in self.keyboard_events:
                     if event.type == pygame.KEYDOWN:

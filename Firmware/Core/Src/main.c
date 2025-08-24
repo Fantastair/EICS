@@ -19,13 +19,15 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "adc.h"
-#include "dma.h"
-#include "tim.h"
 #include "usart.h"
 #include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+
+#include <string.h>
+
+#include "serial.h"
 
 /* USER CODE END Includes */
 
@@ -59,6 +61,22 @@ void SystemClock_Config(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
+void HandleSerialData(void)
+{
+  // 处理接收到的串口数据
+  uint8_t response = 1;
+  uint8_t index = 0;
+  if (strcmp((char *)Serial_ReceiveBuffer, "ACK") == 0)
+  {
+    // 处理 ACK 响应
+    index = Serial_AddString("ACK", index);
+    Serial_SendData(index);
+    // Serial_PrintString("ACK received");
+    response = 0;
+  }
+  Serial_HandleOver(response);
+}
+
 /* USER CODE END 0 */
 
 /**
@@ -90,11 +108,11 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_DMA_Init();
   MX_ADC1_Init();
   MX_USART1_UART_Init();
-  MX_TIM3_Init();
   /* USER CODE BEGIN 2 */
+
+  Serial_Init();
 
   /* USER CODE END 2 */
 
@@ -102,6 +120,10 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+    if (Serial_ReceiveReadyFlag == 1)
+    {
+      HandleSerialData();
+    }
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

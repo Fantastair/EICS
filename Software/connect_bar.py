@@ -3,6 +3,8 @@ import fantas
 from fantas import uimanager as u
 
 import pool
+import link
+
 import colors
 import textstyle
 import buttonstyle
@@ -76,11 +78,12 @@ class ConnectBar(fantas.Label):
             self.search_button.rect.centery = self.rect.h - 70
             for i in self.ani:
                 self.ani[i].rect.centery = 120 + (self.rect.h - 260) / 2
-    
+
     def search(self):
-        if True:
+        if link.state == 'no':
             self.show_ani('no2search')
             self.ani['no2search'].play(1)
+            pool.POOL.submit(link.auto_connect)
 
     def show_ani(self, name):
         if self.ani[name].is_root():
@@ -92,11 +95,11 @@ class ConnectBar(fantas.Label):
                 self.ani[i].leave()
 
     def search_callback(self):
-        if False:
+        if link.state == 'search':
             self.temp = 1
             self.show_ani('search2search')
             fantas.Trigger(self.ani['search2search'].play, 1).launch(30)
-        elif True:
+        elif link.state == 'no':
             self.show_ani('search2no')
             self.ani['search2no'].play(1)
         else:
@@ -116,3 +119,5 @@ class ConnectBarWidget(fantas.Widget):
     def handle(self, event):
         if event.type == pygame.WINDOWSIZECHANGED:
             self.connect_bar.auto_set_height()
+        elif event.type == link.OFFLINE:
+            self.connect_bar.offline()

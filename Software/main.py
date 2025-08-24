@@ -14,6 +14,9 @@ def load_font():
     u.fonts = fantas.load_res_group("./assets/fonts/")
 _font = pool.POOL.submit(load_font)
 
+import link
+link.init()
+
 import colors
 import textstyle
 
@@ -28,8 +31,11 @@ elif screen_size[0] > 1280 and screen_size[1] > 720:
 else:
     screen_size = (1120, 630)
 
-
 u.init("感应线圈传感器", screen_size, borderless=True, resizable=True)
+
+def load_image():
+    u.images = fantas.load_res_group("./assets/images/")
+_image = pool.POOL.submit(load_image)
 
 u.root = fantas.Root(colors.LIGHTBLUE1)
 
@@ -65,6 +71,9 @@ def title_text_return():
     tt_midleft_kf.launch()
     tt_fgcolor_kf.launch()
 tt_alpha_kf.bind_endupwith(title_text_return)
+
+_image.result()
+u.window.set_icon(u.images['icon'])
 
 try:
     u.mainloop()
