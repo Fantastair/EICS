@@ -51,7 +51,8 @@ class NodeBase:
 
     def leave(self):
         # 从父节点中移除
-        self.father.remove(self)
+        if self.father is not None:
+            self.father.remove(self)
 
     def move_to(self, n):
         # 移至位置n
@@ -234,3 +235,22 @@ def tuple_operate(t1, t2, operation):
 
 def tuple_int_operate(t, i, operation):
     return tuple([operation(s,i) for s in t])
+
+def get_rebound_curve(max_height, max_time) -> SuperCurve:
+    """
+    获取回弹曲线
+
+    Args:
+        max_height (int): 最大高度，范围(1, ...)
+        max_time (int): 达到最大高度的时间，范围(0, 1)
+    """
+    return SuperCurve(
+        (
+            FormulaCurve(f'{max_height/2}-{max_height/2}*math.cos({math.pi/max_time}*x)'),
+            FormulaCurve(f'{1+(max_height-1)/2}+{(max_height-1)/2}*math.cos({math.pi/(1-max_time)}*x+{math.pi*max_time/(max_time-1)})'),
+        ),
+        (
+            max_time,
+        )
+    )
+

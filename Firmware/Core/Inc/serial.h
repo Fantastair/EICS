@@ -18,6 +18,9 @@ int Serial_AddBin(uint32_t value, int startIndex);
 
 int Serial_Pow(int base, int exp);
 
+int Serial_ReceiveEquals(const char *str);
+
+void Serial_HandleData(void);
 void Serial_HandleOver(uint8_t response);
 
 #endif

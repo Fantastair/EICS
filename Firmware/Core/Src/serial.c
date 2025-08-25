@@ -1,7 +1,10 @@
+#include <string.h>
 #include "main.h"
 #include "math.h"
 #include "usart.h"
+
 #include "serial.h"
+#include "measure.h"
 
 uint8_t Serial_DataBuffer[128];            // 发送指令缓冲区
 uint8_t Serial_ReceiveBuffer[32] = {0};    // 接收数据缓冲区
@@ -241,7 +244,6 @@ int Serial_AddBin(uint32_t value, int startIndex)
  */
 void Serial_HandleOver(uint8_t response)
 {
-    Serial_ReceiveReadyFlag = 0;
     if (response == 1)
     {
         HAL_UART_Transmit(&huart1, (uint8_t *)0x88, 1, HAL_MAX_DELAY);    // 发送接收完成信号
@@ -263,7 +265,6 @@ int Serial_Pow(int base, int exp)
     }
     return result;
 }
-
 
 uint8_t usart_state = 0;   // 接收状态。0: 等待数据，1: 等待第二个结束符，2: 等待第三个结束符
 /**
@@ -318,4 +319,38 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
             break;
         }
     }
+}
+
+/**
+ * @brief 比较接收到的字符串与给定字符串是否相等
+ * @param str 要比较的字符串
+ * @return 如果相等返回1，否则返回0
+ */
+int Serial_ReceiveEquals(const char *str)
+{
+    return strcmp((char *)Serial_ReceiveBuffer, str) == 0;
+}
+
+/**
+ * @brief 处理接收到的串口数据
+ */
+void Serial_HandleData(void)
+{
+  uint8_t response = 1;
+  uint8_t index = 0;
+  if (Serial_ReceiveEquals("ACK"))    // 收到握手信号
+  {
+    index = Serial_AddString("ACK", index);
+    Serial_SendData(index);
+    response = 0;
+  }
+  else if (Serial_ReceiveEquals("DebugMeasure"))    // 收到调式测量命令
+  {
+    Measure_Start();
+    Measure_Wait();
+    HAL_UART_Transmit(&huart1, (uint8_t *)Measure_Buffer, sizeof(Measure_Buffer), HAL_MAX_DELAY);
+    HAL_UART_Transmit(&huart1, (uint8_t *)"\xff\xff\xff", 3, HAL_MAX_DELAY);
+    response = 0;
+  }
+  Serial_HandleOver(response);
 }

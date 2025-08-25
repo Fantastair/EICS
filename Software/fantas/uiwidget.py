@@ -74,6 +74,7 @@ class ColorButton(fantas.Label):
         # 禁用按钮
         if self.mousewidget.mouseon:
             u.set_cursor_back()
+            self.mousewidget.mouseon = False
         self.is_banned = True
         self.mousewidget.cancel_event()
         if self.shortcut is not None:

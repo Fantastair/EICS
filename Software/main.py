@@ -40,12 +40,24 @@ _image = pool.POOL.submit(load_image)
 u.root = fantas.Root(colors.LIGHTBLUE1)
 
 title_ani = None
+title_text = None
 def load_start_ani():
-    global title_ani
+    global title_ani, title_text
     title_ani = fantas.Animation("./assets/ani/title.webp", center=(u.window.size[0] / 2, u.window.size[1] / 2))
     title_ani.join_to(u.root, 0)
     title_ani.bind_stop_callback(title_ani.leave)
     title_ani.play(1)
+    class TiTleAniWidget(fantas.Widget):
+        def __init__(self, ani):
+            super().__init__(ani)
+            self.ani = ani
+        
+        def handle(self, event):
+            if event.type == pygame.WINDOWSIZECHANGED:
+                self.ani.rect.center = (u.window.size[0] / 2, u.window.size[1] / 2)
+                if title_text is not None:
+                    title_text.rect.center = (u.window.size[0] / 2, u.window.size[1] / 2)
+    TiTleAniWidget(title_ani).apply_event()
 pool.POOL.submit(load_start_ani)
 
 _font.result()
@@ -58,19 +70,21 @@ title_text.alpha = 0
 tt_alpha_kf = fantas.UiKeyFrame(title_text, 'alpha', 255, 90, fantas.harmonic_curve)
 tt_size_kf = fantas.TextKeyFrame(title_text, 'size', 48, 30, fantas.radius_curve)
 tt_midleft_kf = fantas.RectKeyFrame(title_text, 'midleft', (title_bar.rect.h / 4, title_bar.rect.h / 2), 30, fantas.radius_curve)
+tt_midleft_kf.bind_endupwith(title_bar.enable_set_page)
 tt_fgcolor_kf = fantas.TextKeyFrame(title_text, 'fgcolor', colors.LIGHTBLUE1, 30, fantas.radius_curve)
+tt_fgcolor_kf.bind_endupwith(title_bar.set_page, '检测')
 
-connect_bar = connect_bar.ConnectBar()
+connect_bar = connect_bar.ConnectBar(title_bar)
 connect_bar.join_to(u.root, 0)
 tt_size_kf.bind_endupwith(connect_bar.appear)
 
 fantas.Trigger(tt_alpha_kf.launch).launch(180)
-
+# fantas.Trigger(tt_alpha_kf.launch).launch(1)
 def title_text_return():
     tt_size_kf.launch()
     tt_midleft_kf.launch()
     tt_fgcolor_kf.launch()
-tt_alpha_kf.bind_endupwith(title_text_return)
+tt_alpha_kf .bind_endupwith(title_text_return)
 
 _image.result()
 u.window.set_icon(u.images['icon'])

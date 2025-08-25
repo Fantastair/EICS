@@ -11,12 +11,12 @@ import buttonstyle
 
 import title_bar
 
-
 class ConnectBar(fantas.Label):
     WIDTH = 320
     
-    def __init__(self):
+    def __init__(self, tb):
         super().__init__((ConnectBar.WIDTH, u.window.size[1] - title_bar.TitleBar.HEIGHT), bg=colors.WHITE, topright=(-24, title_bar.TitleBar.HEIGHT))
+        self.title_bar = tb
         self.anchor = 'topleft'
         self.shadow = fantas.Ui(self.get_shadow(), topleft=self.rect.topright)
         self.shadow.anchor = 'topleft'
@@ -102,10 +102,11 @@ class ConnectBar(fantas.Label):
         elif link.state == 'no':
             self.show_ani('search2no')
             self.ani['search2no'].play(1)
-        else:
+        elif link.state == 'success':
             self.show_ani('search2success')
             self.ani['search2success'].play(1)
-    
+            self.title_bar.page_buttons[self.title_bar.page].start_link()
+
     def offline(self):
         self.show_ani('success2no')
         self.ani['success2no'].play(1)

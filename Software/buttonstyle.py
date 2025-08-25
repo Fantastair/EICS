@@ -24,9 +24,27 @@ TITLEBAR_WINDOW_BUTTON = {
     'hover_bd': 0,
     'hover_sc': None,
 
-    'press_bg': colors.LIGHTBLUE2 - colors.offset_color,
+    'press_bg': colors.LIGHTBLUE3,
     'press_bd': 0,
     'press_sc': None,
+}
+
+TITLEBAR_PAGE_BUTTON = {
+    'origin_bg': colors.THEMEBLUE,
+    'origin_bd': 0,
+    'origin_sc': None,
+
+    'hover_bg': colors.LIGHTBLUE2,
+    'hover_bd': 0,
+    'hover_sc': None,
+
+    'press_bg': colors.LIGHTBLUE3,
+    'press_bd': 0,
+    'press_sc': None,
+
+    'ban_bg': colors.FAKEWHITE,
+    'ban_bd': 0,
+    'ban_sc': None
 }
 
 CONNECTBAR_BUTTON = {
