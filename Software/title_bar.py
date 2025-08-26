@@ -2,8 +2,6 @@ import pygame
 import fantas
 from fantas import uimanager as u
 
-import link
-
 import colors
 import iconmap
 import buttonstyle
@@ -11,9 +9,9 @@ import textstyle
 
 import connect_bar
 
-import page_button
 import debug_page
 import about_page
+import measure_page
 
 class TitleBar(fantas.Label):
     HEIGHT = 80
@@ -49,7 +47,7 @@ class TitleBar(fantas.Label):
 
         self.page_enable = False
         self.page_buttons = {
-            '检测': page_button.PageButton(self, '检测', iconmap.MEASURE, center=(self.rect.w / 2 - 160, self.rect.h / 2)),
+            '检测': measure_page.MeasurePageButton(self, center=(self.rect.w / 2 - 160, self.rect.h / 2)),
             '调试': debug_page.DebugPageButton(self, center=(self.rect.w / 2, self.rect.h / 2)),
             '关于': about_page.AboutPageButton(self, center=(self.rect.w / 2 + 160, self.rect.h / 2)),
         }

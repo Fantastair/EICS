@@ -212,7 +212,7 @@ def cleanup():
             aware_timer.cancel()
         if serial_conn and serial_conn.is_open:
             try:
-                serial_conn.write(b'\xff\xff\xff')
                 serial_conn.close()
             except:
-                pass
+                import traceback
+                traceback.print_exc()

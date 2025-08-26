@@ -1,12 +1,8 @@
 import fantas
 from fantas import uimanager as u
 
-import link
-
 import colors
 import iconmap
-import textstyle
-import buttonstyle
 
 import page_button
 

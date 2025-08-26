@@ -10,7 +10,6 @@ import link
 import colors
 import iconmap
 import textstyle
-import buttonstyle
 
 import page_button
 
@@ -42,6 +41,7 @@ class DebugPageButton(page_button.PageButton):
 
     def hide_page(self):
         super().hide_page()
+        self.running = False
         for i in range(len(self.wave_boxes)):
             self.wave_boxes[i].disappear(i * 3)
 

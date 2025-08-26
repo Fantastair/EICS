@@ -352,5 +352,29 @@ void Serial_HandleData(void)
     HAL_UART_Transmit(&huart1, (uint8_t *)"\xff\xff\xff", 3, HAL_MAX_DELAY);
     response = 0;
   }
+  else if (Serial_ReceiveEquals("Measure"))    // 收到测量命令
+  {
+    Measure_Start();
+    Measure_Wait();
+    double S1, S2, S3;
+    Measure_GetSensorOutput(&S1, &S2, &S3);
+    TRACK_TYPE track_type;
+    double angle, distance, height;
+    Measure_AnalyzeTrack(S1, S2, S3, &track_type, &angle, &distance, &height);
+    int index = 0;
+    index = Serial_AddString("TrackType:", index);
+    index = Serial_AddString(track_type == NONE ? "None" : track_type == STRAIGHT ? "Straight" : track_type == BEND ? "Bend" : "Arc", index);
+    index = Serial_AddString(", ", index);
+    index = Serial_AddString("Angle:", index);
+    index = Serial_AddDouble(angle, index, 2);
+    index = Serial_AddString(", ", index);
+    index = Serial_AddString("Distance:", index);
+    index = Serial_AddDouble(distance, index, 2);
+    index = Serial_AddString(", ", index);
+    index = Serial_AddString("Height:", index);
+    index = Serial_AddDouble(height, index, 2);
+    Serial_SendData(index);
+    response = 0;
+  }
   Serial_HandleOver(response);
 }
