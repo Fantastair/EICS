@@ -8,6 +8,7 @@ if work_dir.name != "Software":
 import fantas
 from fantas import uimanager as u
 import pygame
+import pygame.freetype
 
 import pool
 def load_font():
@@ -31,7 +32,7 @@ elif screen_size[0] > 1280 and screen_size[1] > 720:
 else:
     screen_size = (1120, 630)
 
-u.init("感应线圈传感器", screen_size, borderless=True, resizable=True)
+u.init("电磁轨道检测装置 - 上位机", screen_size, borderless=True, resizable=True)
 
 def load_image():
     u.images = fantas.load_res_group("./assets/images/")
@@ -47,6 +48,20 @@ def load_start_ani():
     title_ani.join_to(u.root, 0)
     title_ani.bind_stop_callback(title_ani.leave)
     title_ani.play(1)
+    author_sign = fantas.Text("Written By Fantastair", u.fonts['maplemono'], {'size': 20, 'fgcolor': colors.DARKBLUE, 'style': pygame.freetype.STYLE_OBLIQUE}, midbottom=(u.window.size[0] / 2, u.window.size[1] - 20))
+    author_sign.join(u.root)
+    author_sign.alpha = 0
+    curve = fantas.SuperCurve(
+    (
+        fantas.FormulaCurve(f"{1/0.33}*x"),
+        fantas.FormulaCurve("1"),
+        fantas.FormulaCurve(f"{-1/(1-0.66)}*x+{1/(1-0.66)}")
+    ),
+        (0.33, 0.66)
+    )
+    as_alpha_kf = fantas.UiKeyFrame(author_sign, 'alpha', 255, 270, curve)
+    as_alpha_kf.bind_endupwith(author_sign.leave)
+    as_alpha_kf.launch()
     class TiTleAniWidget(fantas.Widget):
         def __init__(self, ani):
             super().__init__(ani)
@@ -57,6 +72,7 @@ def load_start_ani():
                 self.ani.rect.center = (u.window.size[0] / 2, u.window.size[1] / 2)
                 if title_text is not None:
                     title_text.rect.center = (u.window.size[0] / 2, u.window.size[1] / 2)
+                author_sign.rect.midbottom = (u.window.size[0] / 2, u.window.size[1] - 20)
     TiTleAniWidget(title_ani).apply_event()
 pool.POOL.submit(load_start_ani)
 

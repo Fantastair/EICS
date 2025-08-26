@@ -187,7 +187,7 @@ _mouse_events = (
     )
 
 
-class Ui(fantas.NodeBase):
+class   Ui(fantas.NodeBase):
     # 图形显示的基本单元
 
     __slots__ = ['anchor', 'angle', 'alpha', 'origin_alpha', 'update_flag', 'widgetgroup', 'img', 'size', 'origin_size', 'rect', 'temp_img']

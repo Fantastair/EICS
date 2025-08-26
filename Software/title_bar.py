@@ -13,6 +13,7 @@ import connect_bar
 
 import page_button
 import debug_page
+import about_page
 
 class TitleBar(fantas.Label):
     HEIGHT = 80
@@ -50,10 +51,11 @@ class TitleBar(fantas.Label):
         self.page_buttons = {
             '检测': page_button.PageButton(self, '检测', iconmap.MEASURE, center=(self.rect.w / 2 - 160, self.rect.h / 2)),
             '调试': debug_page.DebugPageButton(self, center=(self.rect.w / 2, self.rect.h / 2)),
-            '关于': page_button.PageButton(self, '关于', iconmap.ABOUT, center=(self.rect.w / 2 + 160, self.rect.h / 2)),
+            '关于': about_page.AboutPageButton(self, center=(self.rect.w / 2 + 160, self.rect.h / 2)),
         }
         for i in self.page_buttons:
             self.page_buttons[i].join(self)
+        self.last_window_height = u.window.size[1]
 
     def click_close(self):
         pygame.event.post(pygame.event.Event(pygame.QUIT))
@@ -88,9 +90,10 @@ class TitleBar(fantas.Label):
             self.page_buttons['关于'].rect.centerx = self.rect.w / 2 + 160
             for i in self.page_buttons:
                 self.page_buttons[i].auto_adjust_size()
-        elif u.window.size[1] != self.shadow.rect.h:
+        elif u.window.size[1] != self.last_window_height:
             for i in self.page_buttons:
                 self.page_buttons[i].auto_adjust_size()
+        self.last_window_height = u.window.size[1]
 
     def get_shadow(self):
         s = pygame.Surface((self.rect.w, 24), flags=pygame.SRCALPHA).convert_alpha()

@@ -53,11 +53,11 @@ CONNECTBAR_BUTTON = {
     'origin_sc': colors.DARKBLUE,
 
     'hover_bg': colors.LIGHTBLUE1,
-    'hover_bd': 2,
+    'hover_bd': 4,
     'hover_sc': colors.DARKBLUE,
 
     'press_bg': colors.LIGHTBLUE2,
-    'press_bd': 2,
+    'press_bd': 4,
     'press_sc': colors.DARKBLUE,
 }
 

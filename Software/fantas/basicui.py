@@ -409,3 +409,18 @@ class SlideBlock(Label):
         # 选中选项后执行的操作，在子类里定义
         pass
 '''
+
+class VectorImage(fantas.Ui):
+    def __init__(self, svg_path, size, **anchor):
+        self.svg_path = svg_path
+        super().__init__(pygame.image.load_sized_svg(svg_path, size), **anchor)
+    
+    def set_size(self, size):
+        self.img = pygame.image.load_sized_svg(self.svg_path, size)
+        self.mark_update()
+
+
+def get_shadow(ui, radius, color=pygame.Color('#000000'), offset=(0, 0)):
+    surface = pygame.Surface((ui.rect.w + radius * 2, ui.rect.h + radius * 2), flags=pygame.SRCALPHA)
+    surface.blit(ui.img, (radius, radius))
+    return fantas.Ui(pygame.transform.gaussian_blur(pygame.transform.solid_overlay(surface, color), radius), topleft=(ui.rect.left - radius + offset[0], ui.rect.top - radius + offset[1]))

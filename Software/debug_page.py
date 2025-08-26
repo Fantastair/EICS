@@ -46,8 +46,8 @@ class DebugPageButton(page_button.PageButton):
             self.wave_boxes[i].disappear(i * 3)
 
     def auto_adjust_size(self):
-        if not self.is_banned:
-            return
+        # if not self.is_banned:
+        #     return
         usable_rect = self.title_bar.get_usable_rect()
         if self.usable_rect == usable_rect:
             return
@@ -78,7 +78,7 @@ class DebugPageButton(page_button.PageButton):
             for i in self.wave_boxes:
                 i.wave.draw()
         if self.running and link.state == 'success':
-            time.sleep(0.2)
+            # time.sleep(0.2)
             link.send_read_data('DebugMeasure', self.draw_curve)
         else:
             self.running = False
@@ -93,12 +93,13 @@ class WaveBox(fantas.Label):
         self.id = ID
         self.id_text = fantas.Text(f'通道 {ID + 1}', u.fonts['maplemono'], {'size': self.rect.h / 2, 'fgcolor': colors.LIGHTBLUE1, 'style': pygame.freetype.STYLE_STRONG | pygame.freetype.STYLE_OBLIQUE}, center=(self.rect.w / 2, self.rect.h / 2))
         self.id_text.join(self)
-        # self.page_button = page_button
+        self.page_button = page_button
         self.scale_texts = (
             WaveScaleText("3.3V", self, left=self.rect.left + 12),
             WaveScaleText("1.65", self, left=self.rect.left + 12),
             WaveScaleText("0", self, left=self.rect.left + 12),
         )
+        self.appeared = False
         self.row_lines = []
         self.col_lines = []
         r, c = calc_rc_num((self.rect.w, self.rect.h - 24), WaveBox.MAX_BLOCK_SIZE)
@@ -113,6 +114,8 @@ class WaveBox(fantas.Label):
         self.wave = Wave(self)
 
     def auto_adjust_size(self):
+        if not self.appeared:
+            self.rect.top -= PADDING
         self.top_kf.value = self.rect.top
         self.id_text.style['size'] = self.rect.h / 2
         self.id_text.rect.center = (self.rect.w / 2, self.rect.h / 2)
@@ -142,14 +145,16 @@ class WaveBox(fantas.Label):
         for i in range(rows):
             self.row_lines[i].set_size((self.rect.w - self.bd * 2, 1))
             self.row_lines[i].rect.top = 12 + (self.rect.h - 24) * i // (rows - 1)
-        self.scale_texts[0].rect.centery = self.rect.top + 12
-        self.scale_texts[1].rect.centery = self.rect.centery
-        self.scale_texts[2].rect.centery = self.rect.bottom - 12
+        centery = (PADDING + self.rect.h) * (self.id) + PADDING + self.rect.h // 2 + self.page_button.usable_rect.top
+        self.scale_texts[0].rect.centery = centery - self.rect.h / 2 + 12
+        self.scale_texts[1].rect.centery = centery
+        self.scale_texts[2].rect.centery = centery + self.rect.h / 2 - 12
         for i in range(cols):
             self.col_lines[i].set_size((1, self.rect.h - 24))
             self.col_lines[i].rect.left = self.rect.w * (i + 1) // (cols + 1)
     
     def appear(self, delay):
+        self.appeared = True
         if self.trigger.is_launched():
             self.trigger.stop()
         if delay > 0:
@@ -169,6 +174,7 @@ class WaveBox(fantas.Label):
             i.appear()
 
     def disappear(self, delay):
+        self.appeared = False
         if self.trigger.is_launched():
             self.trigger.stop()
         if delay > 0:
@@ -186,6 +192,7 @@ class WaveBox(fantas.Label):
         self.top_kf.launch()
         for i in self.scale_texts:
             i.disappear()
+u.REROUND_CURVE = WaveBox.REBOUND_CURVE
 
 class WaveScaleText(fantas.Text):
     def __init__(self, text, wave_box, **kwargs):
@@ -218,30 +225,32 @@ class Wave(fantas.Ui):
         self.anchor = 'topleft'
         self.wave_box = wave_box
         self.join(wave_box)
-        self.points = [None] * 128
+        self.points = None
         self.line = fantas.Label(self.size, bg=colors.BLACK, left=0)
         self.line.anchor = 'left'
         self.line.alpha = 100
-        self.line.join(self)
         self.text = fantas.Text("0.00mV", u.fonts['maplemono'], {'fgcolor': colors.WHITE, 'bgcolor': colors.BLACK, 'size': 24})
         self.text.alpha = 144
-        self.text.join(self)
 
     def draw(self):
         self.img = pygame.Surface(self.wave_box.rect.size, flags=pygame.SRCALPHA).convert_alpha()
         self.size = self.origin_size = self.img.get_size()
-        if self.points is not None:
-            pygame.draw.lines(self.img, Wave.COLOR, False, self.get_points(), 3)
-        a = self.get_average()
-        text = f'{round(a * 3300 / 4095, 2)}mV'
-        if text != self.text.text:
-            self.text.text = text
-            self.text.update_img()
-        if self.size[0] != self.line.size[0]:
-            self.line.set_size((self.size[0], 3))
-        self.line.rect.centery = self.size[1] - 12 - (self.size[1] - 24) * a / 4095
-        self.text.rect.center = self.line.rect.center
         self.mark_update()
+        if self.points is not None:
+            if self.text.is_root():
+                self.text.join(self)
+            if self.line.is_root():
+                self.line.join(self)
+            pygame.draw.lines(self.img, Wave.COLOR, False, self.get_points(), 3)
+            a = self.get_average()
+            text = f'{round(a * 3300 / 4095, 2)}mV'
+            if text != self.text.text:
+                self.text.text = text
+                self.text.update_img()
+            if self.size[0] != self.line.size[0]:
+                self.line.set_size((self.size[0], 3))
+            self.line.rect.centery = self.size[1] - 12 - (self.size[1] - 24) * a / 4095
+            self.text.rect.center = self.line.rect.center
 
     def get_points(self):
         w, h = self.size
