@@ -32,7 +32,7 @@ elif screen_size[0] > 1280 and screen_size[1] > 720:
 else:
     screen_size = (1120, 630)
 
-u.init("电磁轨道检测装置 - 上位机", screen_size, borderless=True, resizable=True)
+u.init("电磁轨道检测装置 - 上位机", screen_size, borderless=True, resizable=True, allow_high_dpi=True)
 
 def load_image():
     u.images = fantas.load_res_group("./assets/images/")
@@ -77,6 +77,7 @@ def load_start_ani():
 pool.POOL.submit(load_start_ani)
 
 _font.result()
+_image.result()
 title_bar = title_bar.TitleBar()
 title_bar.join(u.root)
 
@@ -94,15 +95,14 @@ connect_bar = connect_bar.ConnectBar(title_bar)
 connect_bar.join_to(u.root, 0)
 tt_size_kf.bind_endupwith(connect_bar.appear)
 
+# tt_alpha_kf.launch()
 fantas.Trigger(tt_alpha_kf.launch).launch(180)
-# fantas.Trigger(tt_alpha_kf.launch).launch(1)
 def title_text_return():
     tt_size_kf.launch()
     tt_midleft_kf.launch()
     tt_fgcolor_kf.launch()
 tt_alpha_kf .bind_endupwith(title_text_return)
 
-_image.result()
 u.window.set_icon(u.images['icon'])
 
 try:

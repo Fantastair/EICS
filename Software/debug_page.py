@@ -276,13 +276,6 @@ class Wave(fantas.Ui):
         return sum(filtered_points) / len(filtered_points)
 
 def calc_rc_num(area_size, max_block_size):
-    """
-    计算区域内行列数
-
-    Args:
-        area_size (tuple(int, int)): 区域大小 (宽, 高)
-        max_block_size (int): 最大块大小
-    """
     width, height = area_size
     cols = (width + max_block_size - 1) // max_block_size - 1
     rows = (height + max_block_size - 1) // max_block_size + 1
