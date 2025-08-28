@@ -16,10 +16,10 @@ typedef enum
 
 void Measure_Start(void);
 void Measure_Wait(void);
-void Measure_GetSensorOutput(double *S1, double *S2, double *S3);
+void Measure_GetSensorOutput(float *S1, float *S2, float *S3);
 
-void Measure_AnalyzeTrack(double S1, double S2, double S3, TRACK_TYPE *track_type, double *angle, double *distance, double *height);
+void Measure_AnalyzeTrack(float S1, float S2, float S3, TRACK_TYPE *track_type, float *angle, float *distance, float *height);
 
-double moving_average_filter(const uint16_t *data, int index, int size);
+float moving_average_filter(const uint16_t *data, int index, int size);
 
 #endif

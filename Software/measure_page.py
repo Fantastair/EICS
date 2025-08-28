@@ -67,14 +67,10 @@ class MeasurePageButton(page_button.PageButton):
             angle = float(match.group(2))
             distance = float(match.group(3))
             height = float(match.group(4))
-            import random
-            angle = random.randint(-90, 90)
-            distance = round(random.uniform(-20, 20), 2)
-            height = round(random.uniform(0, 50), 2)
             self.boxes[0].draw_track_type(track_type)
             self.boxes[1].set_angle(angle)
-            self.boxes[2].add_data(distance)
-            self.boxes[3].add_data(height)
+            self.boxes[2].add_data(distance * 1000)
+            self.boxes[3].add_data(height * 1000)
 
         if self.running and link.state == 'success':
             time.sleep(0.2)
@@ -206,6 +202,7 @@ class TrackAngleBox(MeasureBox):
         self.update_sensor()
     
     def set_angle(self, angle):
+        angle = round(angle % 360, 2)
         self.sensor_angle = angle
         self.title_text.text = f"轨道角度：{angle}°"
         self.title_text.update_img()
@@ -329,7 +326,10 @@ class TrackDistanceBox(TrackDataWaveBox):
             min_data = -max_data
         else:
             max_data = -min_data
-        return super().get_points(rect, max_data, min_data)
+        if max_data == min_data:
+            return [(round(2 + (rect.w - 4) * i / 127), rect.h // 2) for i in range(len(self.data_queue))]
+        else:
+            return [(round(2 + (rect.w - 4) * i / 127), round(2 + (rect.h - 4) * (1 - (self.data_queue[i] - min_data) / (max_data - min_data)))) for i in range(len(self.data_queue))]
     
 class TrackHeightBox(TrackDataWaveBox):
     def __init__(self, page_button):
@@ -341,4 +341,10 @@ class TrackHeightBox(TrackDataWaveBox):
         self.row_lines[-1].rect.top -= 2
     
     def get_points(self, rect):
-        return super().get_points(rect, min_data=0)
+        min_data=0
+        max_data = max(self.data_queue)
+        if min_data == max_data:
+            return [(round(2 + (rect.w - 4) * i / 127), rect.h) for i in range(len(self.data_queue))]
+        else:
+            return [(round(2 + (rect.w - 4) * i / 127), round(2 + (rect.h - 4) * (1 - (self.data_queue[i] - min_data) / (max_data - min_data)))) for i in range(len(self.data_queue))]
+
