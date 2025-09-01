@@ -172,7 +172,7 @@ def auto_connect():
     state = 'search'
     ports = serial.tools.list_ports.comports()
     for p, d, _ in sorted(ports):
-        if '蓝牙' in d:
+        if '蓝牙' in d or 'Bluetooth' in d:
             continue
         print(f"尝试连接端口：{p} - {d}")
         try:

@@ -13,9 +13,9 @@ import title_bar
 
 class ConnectBar(fantas.Label):
     WIDTH = 320
-    
+
     def __init__(self, tb):
-        super().__init__((ConnectBar.WIDTH, u.window.size[1] - title_bar.TitleBar.HEIGHT), bg=colors.WHITE, topright=(-24, title_bar.TitleBar.HEIGHT))
+        super().__init__((ConnectBar.WIDTH, u.window.size[1] * u.ratio - title_bar.TitleBar.HEIGHT), bg=colors.WHITE, topright=(-24, title_bar.TitleBar.HEIGHT))
         self.title_bar = tb
         self.anchor = 'topleft'
         self.shadow = fantas.Ui(self.get_shadow(), topleft=self.rect.topright)
@@ -29,6 +29,8 @@ class ConnectBar(fantas.Label):
         self.search_button = fantas.SmoothColorButton((280, 100), buttonstyle.CONNECTBAR_BUTTON, radius={"border_radius": 16}, center=(self.rect.w / 2, self.rect.h - 70))
         self.search_button.bind(self.search)
         self.search_button.join(self)
+        print(self.rect)
+        print(self.search_button.rect)
         fantas.Text("连接传感器", u.fonts['maplemono'], textstyle.CONNECTBAR_NORMAL_TEXT, center=(self.search_button.rect.w / 2, self.search_button.rect.h / 2)).join(self.search_button)
 
         self.ani = {
@@ -57,22 +59,22 @@ class ConnectBar(fantas.Label):
     def join(self, node):
         self.shadow.join(node)
         super().join(node)
-    
+
     def join_to(self, node, index):
         self.shadow.join_to(node, index)
         super().join_to(node, index)
-    
+
     def leave(self):
         super().leave()
         self.shadow.leave()
-    
+
     def appear(self):
         self.left_kf.launch()
         self.shadow_left_kf.launch()
-    
+
     def auto_set_height(self):
-        if u.window.size[1] != self.rect.h:
-            self.set_size((self.rect.w, u.window.size[1] - title_bar.TitleBar.HEIGHT))
+        if u.window.size[1] * u.ratio != self.rect.h:
+            self.set_size((self.rect.w, u.window.size[1] * u.ratio - title_bar.TitleBar.HEIGHT))
             self.shadow.img = self.get_shadow()
             self.shadow.mark_update()
             self.search_button.rect.centery = self.rect.h - 70
