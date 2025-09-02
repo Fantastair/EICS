@@ -66,7 +66,7 @@ def load_start_ani():
         def __init__(self, ani):
             super().__init__(ani)
             self.ani = ani
-        
+
         def handle(self, event):
             if event.type == pygame.WINDOWSIZECHANGED:
                 self.ani.rect.center = (u.window.size[0] / 2, u.window.size[1] / 2)
