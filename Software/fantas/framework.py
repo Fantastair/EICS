@@ -67,8 +67,8 @@ class UiManager:
         while True:
             self.clock.tick(self.fps)
             for event in pygame.event.get():
-                # if event.type != pygame.MOUSEMOTION:
-                #     print(event)
+                if hasattr(event, 'pos'):
+                    event.pos = event.pos[0] * self.ratio, event.pos[1] * self.ratio
                 if event.type == pygame.QUIT:
                     return
                 elif event.type in self.keyboard_events:
@@ -426,11 +426,14 @@ class UiGroup(Ui):
             ui.rect.left -= self.rect.left
             ui.rect.top -= self.rect.top
 
-import ctypes
-SDL = ctypes.CDLL('SDL2')
+import pygame._sdl2 as sdl2
+import ctypes.util
 
-SDL.SDL_GetDisplayUsableBounds.argtypes = [ctypes.c_int, ctypes.c_void_p]
-SDL.SDL_GetDisplayUsableBounds.restype  = ctypes.c_int
+# 让 ctypes 找到 pygame 附带的 libSDL2.dylib
+lib_path = ctypes.util.find_library('SDL2-2.0')
+if not lib_path:          # 某些 pygame 版本名字略有差异
+    lib_path = ctypes.util.find_library('SDL2')
+SDL = ctypes.CDLL(lib_path)
 
 class SDL_Rect(ctypes.Structure):
     _fields_ = [("x", ctypes.c_int),

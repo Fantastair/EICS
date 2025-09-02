@@ -18,7 +18,7 @@ class TitleBar(fantas.Label):
     BUTTON_RADIUS = 20
 
     def __init__(self):
-        super().__init__((u.window.size[0], TitleBar.HEIGHT), bg=colors.THEMEBLUE, topleft=(0, 0))
+        super().__init__((u.window.size[0] * u.ratio, TitleBar.HEIGHT), bg=colors.THEMEBLUE, topleft=(0, 0))
         self.anchor = 'topleft'
 
         self.close_window_button = fantas.CircleButton(TitleBar.BUTTON_RADIUS, buttonstyle.TITLEBAR_CLOSE_BUTTON, center=(self.rect.w - self.rect.h / 2, self.rect.h / 2))
@@ -76,8 +76,8 @@ class TitleBar(fantas.Label):
             self.maximize_window_button.kidgroup[0].update_img()
     
     def auto_set_width(self):
-        if u.window.size[0] != self.rect.w:
-            self.set_size((u.window.size[0], self.rect.h))
+        if u.window.size[0] * u.ratio != self.rect.w:
+            self.set_size((u.window.size[0] * u.ratio, self.rect.h))
             self.close_window_button.rect.centerx = self.rect.w - self.rect.h / 2
             self.maximize_window_button.rect.centerx = self.rect.w - self.rect.h / 2 - TitleBar.BUTTON_RADIUS * 3
             self.minimize_window_button.rect.centerx = self.rect.w - self.rect.h / 2 - TitleBar.BUTTON_RADIUS * 6
@@ -88,10 +88,10 @@ class TitleBar(fantas.Label):
             self.page_buttons['关于'].rect.centerx = self.rect.w / 2 + 160
             for i in self.page_buttons:
                 self.page_buttons[i].auto_adjust_size()
-        elif u.window.size[1] != self.last_window_height:
+        elif u.window.size[1] * u.ratio != self.last_window_height:
             for i in self.page_buttons:
                 self.page_buttons[i].auto_adjust_size()
-        self.last_window_height = u.window.size[1]
+        self.last_window_height = u.window.size[1] * u.ratio
 
     def get_shadow(self):
         s = pygame.Surface((self.rect.w, 24), flags=pygame.SRCALPHA).convert_alpha()
@@ -131,7 +131,7 @@ class TitleBar(fantas.Label):
         self.page_enable = True
     
     def get_usable_rect(self):
-        return pygame.Rect(connect_bar.ConnectBar.WIDTH, TitleBar.HEIGHT, u.window.size[0] - connect_bar.ConnectBar.WIDTH, u.window.size[1] - TitleBar.HEIGHT)
+        return pygame.Rect(connect_bar.ConnectBar.WIDTH, TitleBar.HEIGHT, u.window.size[0] * u.ratio - connect_bar.ConnectBar.WIDTH, u.window.size[1] * u.ratio - TitleBar.HEIGHT)
 
 
 class TitleBarWidget(fantas.MouseBase):
@@ -197,8 +197,8 @@ class TitleBarWidget(fantas.MouseBase):
         else:
             on_left = pos[0] <= self.EDGE
             on_top = pos[1] <= self.EDGE
-            on_right = pos[0] >= u.window.size[0] - self.EDGE
-            on_bottom = pos[1] >= u.window.size[1] - self.EDGE
+            on_right = pos[0] >= u.window.size[0] * u.ratio - self.EDGE
+            on_bottom = pos[1] >= u.window.size[1] * u.ratio - self.EDGE
             if on_left:
                 if on_top:
                     self.dragging_edge = 'top_left'
