@@ -6,3 +6,4 @@ Firmware/MDK-ARM/
 Firmware/.mxproject
 Software/dist/
 Software/build/
+.DS_Store

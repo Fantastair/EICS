@@ -57,7 +57,7 @@ class TitleBar(fantas.Label):
 
     def click_close(self):
         pygame.event.post(pygame.event.Event(pygame.QUIT))
-    
+
     def click_minimize(self):
         u.window.minimize()
 
@@ -74,7 +74,7 @@ class TitleBar(fantas.Label):
             self.maximized = True
             self.maximize_window_button.kidgroup[0].text = iconmap.CANCEL_MAXIMIZE_WINDOW
             self.maximize_window_button.kidgroup[0].update_img()
-    
+
     def auto_set_width(self):
         if u.window.size[0] * u.ratio != self.rect.w:
             self.set_size((u.window.size[0] * u.ratio, self.rect.h))
@@ -101,11 +101,11 @@ class TitleBar(fantas.Label):
     def join(self, node):
         self.shadow.join(node)
         super().join(node)
-    
+
     def leave(self):
         super().leave()
         self.shadow.leave()
-    
+
     def mouse_on_blank(self):
         result = not (self.close_window_button.mousewidget.mouseon or \
                       self.maximize_window_button.mousewidget.mouseon or \
@@ -114,7 +114,7 @@ class TitleBar(fantas.Label):
             return False
         result = not any(self.page_buttons[i].mousewidget.mouseon for i in self.page_buttons)
         return result
-    
+
     def set_page(self, page):
         self.page = page
         if not self.page_enable:
@@ -129,7 +129,7 @@ class TitleBar(fantas.Label):
 
     def enable_set_page(self):
         self.page_enable = True
-    
+
     def get_usable_rect(self):
         return pygame.Rect(connect_bar.ConnectBar.WIDTH, TitleBar.HEIGHT, u.window.size[0] * u.ratio - connect_bar.ConnectBar.WIDTH, u.window.size[1] * u.ratio - TitleBar.HEIGHT)
 
@@ -137,17 +137,42 @@ class TitleBar(fantas.Label):
 class TitleBarWidget(fantas.MouseBase):
     EDGE = 10
     MINISIZE = (1120, 630)
-    
+
     def __init__(self, title_bar):
         super().__init__(title_bar, 2)
         self.title_bar = title_bar
         self.start_pos = None
         self.dragging_edge = None
         self.cursor = '^'
-    
+
     def handle(self, event):
         super().handle(event)
         if event.type == pygame.WINDOWSIZECHANGED:
+            if fantas.PLATFORM == "Darwin":
+                p, s = self.title_bar.normal_state
+                w_flag = u.window.size[0] < 1120
+                h_flag = u.window.size[1] < 630
+                l_flag = u.window.position[0] != p[0]
+                t_flag = u.window.position[1] != p[1]
+                changed = False
+                if w_flag:
+                    if h_flag:
+                        u.window.size = (1120, 630)
+                    else:
+                        u.window.size = (1120, u.window.size[1])
+                    changed = True
+                elif h_flag:
+                    u.window.size = (u.window.size[0], 630)
+                    changed = True
+                if changed:
+                    if l_flag:
+                        if t_flag:
+                            u.window.position = (p[0] + s[0] - u.window.size[0], p[1] + s[1] - u.window.size[1])
+                        else:
+                            u.window.position = (p[0] + s[0] - u.window.size[0], p[1])
+                    elif t_flag:
+                        u.window.position = (p[0], p[1] + s[1] - u.window.size[1])
+            self.title_bar.normal_state = (u.window.position, u.window.size)
             self.title_bar.auto_set_width()
 
     def mousepress(self, pos, button):
@@ -168,25 +193,33 @@ class TitleBarWidget(fantas.MouseBase):
             if self.dragging_edge is not None:
                 origin_pos = (self.title_bar.normal_state[0][0], self.title_bar.normal_state[0][1])
                 origin_size = (self.title_bar.normal_state[1][0], self.title_bar.normal_state[1][1])
-                drag_offset = (pos[0] - self.start_pos[0], pos[1] - self.start_pos[1])
+                drag_offset = [pos[0] - self.start_pos[0], pos[1] - self.start_pos[1]]
                 if 'left' in self.dragging_edge:
+                    if u.window.size[0] - drag_offset[0] < 1120:
+                        drag_offset[0] = u.window.size[0] - 1120
                     w = origin_size[0] - drag_offset[0]
                     if w < TitleBarWidget.MINISIZE[0]:
                         w = TitleBarWidget.MINISIZE[0]
                     u.window.size = (w, u.window.size[1])
                     u.window.position = (origin_pos[0] + origin_size[0] - w, u.window.position[1])
                 elif 'right' in self.dragging_edge:
+                    if u.window.size[0] + drag_offset[0] < 1120:
+                        drag_offset[0] = 1120 - u.window.size[0]
                     w = origin_size[0] + drag_offset[0]
                     if w < TitleBarWidget.MINISIZE[0]:
                         w = TitleBarWidget.MINISIZE[0]
                     u.window.size = (w, u.window.size[1])
                 if 'top' in self.dragging_edge:
+                    if u.window.size[1] - drag_offset[1] < 630:
+                        drag_offset[1] = u.window.size[1] - 630
                     h = origin_size[1] - drag_offset[1]
                     if h < TitleBarWidget.MINISIZE[1]:
                         h = TitleBarWidget.MINISIZE[1]
                     u.window.size = (u.window.size[0], h)
                     u.window.position = (u.window.position[0], origin_pos[1] + origin_size[1] - h)
                 elif 'bottom' in self.dragging_edge:
+                    if u.window.size[1] + drag_offset[1] < 630:
+                        drag_offset[1] = 630 - u.window.size[1]
                     h = origin_size[1] + drag_offset[1]
                     if h < TitleBarWidget.MINISIZE[1]:
                         h = TitleBarWidget.MINISIZE[1]
@@ -228,7 +261,7 @@ class TitleBarWidget(fantas.MouseBase):
             elif self.cursor != '^':
                 self.set_cursor('^')
                 self.dragging_edge = None
-    
+
     def set_cursor(self, cursor):
         pygame.mouse.set_cursor(u.cursor_map[cursor])
         self.cursor = cursor

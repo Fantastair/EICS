@@ -29,8 +29,6 @@ class ConnectBar(fantas.Label):
         self.search_button = fantas.SmoothColorButton((280, 100), buttonstyle.CONNECTBAR_BUTTON, radius={"border_radius": 16}, center=(self.rect.w / 2, self.rect.h - 70))
         self.search_button.bind(self.search)
         self.search_button.join(self)
-        print(self.rect)
-        print(self.search_button.rect)
         fantas.Text("连接传感器", u.fonts['maplemono'], textstyle.CONNECTBAR_NORMAL_TEXT, center=(self.search_button.rect.w / 2, self.search_button.rect.h / 2)).join(self.search_button)
 
         self.ani = {

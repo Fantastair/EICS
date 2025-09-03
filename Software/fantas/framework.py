@@ -54,6 +54,7 @@ class UiManager:
         self.WIDTH, self.HEIGHT = self.size = self.window.size
 
     def quit(self):
+        self.set_cursor('^')
         pygame.quit()
         sys.exit(0)
 
