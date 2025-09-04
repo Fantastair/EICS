@@ -3,27 +3,64 @@ set -e
 cd "$(dirname "$0")" || exit
 
 echo "=== MacOS环境自动打包脚本 ==="
-echo "- 需要python虚拟环境"
-echo "- 需要pygame-ce 2.5.5"
-echo "- 需要pyserial 3.5"
-echo "- 需要pyinstaller"
+echo "- 需要python环境"
+which python >/dev/null 2>&1 || { echo "未发现python命令，打包需要python环境，请先安装python"; read -n 1 -s -r -p "输入任意内容结束..."; exit 1; }
+
+echo "选择操作（建议使用虚拟环境打包）："
+echo "1. 输入解释器根目录（请确保内部包含 bin/activate 文件）"
+echo "2. 在当前目录下自动创建虚拟环境（./.venv，已存在可以重复使用）"
+echo "3. 使用全局环境（不推荐）"
+echo "4. 退出"
+read -rp "输入选项（1-4）: " OPTION
+case $OPTION in
+    1)
+        read -rp "输入解释器根目录（请确保内部包含 bin/activate 文件）: " VENV_PATH
+        ACTIVATE_PATH="$VENV_PATH/bin/activate"
+        source "$ACTIVATE_PATH"
+        pip install --upgrade pip
+        pip install pygame-ce==2.5.5 pyserial==3.5 pyinstaller
+        ;;
+    2)
+        VENV_PATH="./.venv"
+        ACTIVATE_PATH="$VENV_PATH/bin/activate"
+        if [[ -f "$ACTIVATE_PATH" ]]; then
+            echo "虚拟环境已存在: $ACTIVATE_PATH"
+            read -n 1 -s -r -p "输入任意内容结束..."
+            exit 1
+        else
+            echo "创建虚拟环境: $VENV_PATH"
+            python -m venv "$VENV_PATH"
+            source "$ACTIVATE_PATH"
+            pip install --upgrade pip
+            pip install pygame-ce==2.5.5 pyserial==3.5 pyinstaller
+        fi
+        ;;
+    3)
+        echo "使用全局环境（不推荐）"
+        pip install --upgrade pip
+        pip install pygame-ce==2.5.5 pyserial==3.5 pyinstaller
+        ;;
+    *)
+        echo "无效选项"
+        exit 1
+        ;;
+esac
+
 echo "- 打包时可能需要输入y并按回车确认，用于清除缓存"
-
-read -rp "输入虚拟环境根目录: " VENV_PATH
-
-ACTIVATE_PATH="$VENV_PATH/bin/activate"
-
-if [[ ! -f "$ACTIVATE_PATH" ]]; then
-    echo "虚拟环境不存在: $ACTIVATE_PATH"
-    read -n 1 -s -r -p "输入任意内容结束..."
-    exit 1
-fi
-
-source "$ACTIVATE_PATH"
+echo "开始打包..."
 
 pyinstaller main.spec --clean
 python after_pack.py
 
 echo "=== 打包完成 ==="
+if [[ $OPTION == "2" ]]; then
+    read -rp "是否删除虚拟环境？(y/n): " DELETE_VENV
+    if [[ $DELETE_VENV == "y" || $DELETE_VENV == "Y" ]]; then
+        VENV_PATH="./.venv"
+        if [[ -d "$VENV_PATH" ]]; then
+            rm -rf "$VENV_PATH"
+        fi
+        echo "虚拟环境已删除"
+    fi
+fi
 read -n 1 -s -r -p "输入任意内容结束..."
-
