@@ -69,7 +69,7 @@ class UiManager:
             self.clock.tick(self.fps)
             for event in pygame.event.get():
                 if hasattr(event, 'pos'):
-                    event.pos = event.pos[0] * self.ratio, event.pos[1] * self.ratio
+                    event.pos = event.pos[0] * self.dpi_ratio, event.pos[1] * self.dpi_ratio
                 if event.type == pygame.QUIT:
                     return
                 elif event.type in self.keyboard_events:

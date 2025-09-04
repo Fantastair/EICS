@@ -15,7 +15,7 @@ class ConnectBar(fantas.Label):
     WIDTH = 320
 
     def __init__(self, tb):
-        super().__init__((ConnectBar.WIDTH, u.window.size[1] * u.ratio - title_bar.TitleBar.HEIGHT), bg=colors.WHITE, topright=(-24, title_bar.TitleBar.HEIGHT))
+        super().__init__((ConnectBar.WIDTH, u.window.size[1] * u.dpi_ratio - title_bar.TitleBar.HEIGHT), bg=colors.WHITE, topright=(-24, title_bar.TitleBar.HEIGHT))
         self.title_bar = tb
         self.anchor = 'topleft'
         self.shadow = fantas.Ui(self.get_shadow(), topleft=self.rect.topright)
@@ -71,8 +71,8 @@ class ConnectBar(fantas.Label):
         self.shadow_left_kf.launch()
 
     def auto_set_height(self):
-        if u.window.size[1] * u.ratio != self.rect.h:
-            self.set_size((self.rect.w, u.window.size[1] * u.ratio - title_bar.TitleBar.HEIGHT))
+        if u.window.size[1] * u.dpi_ratio != self.rect.h:
+            self.set_size((self.rect.w, u.window.size[1] * u.dpi_ratio - title_bar.TitleBar.HEIGHT))
             self.shadow.img = self.get_shadow()
             self.shadow.mark_update()
             self.search_button.rect.centery = self.rect.h - 70

@@ -1,19 +1,19 @@
 from pathlib import Path
-import os
-work_dir = Path(os.getcwd())
-if work_dir.name != "Software":
-    work_dir /= "Software"
-    os.chdir(work_dir)
+import os, sys, platform
+
+if getattr(sys, 'frozen', False):    # 打包发布环境
+    if platform.system() == 'Darwin':
+        os.chdir(Path(sys.executable).parent.parent)
+else:                                # 开发环境
+    os.chdir(Path(os.getcwd()) / 'Software')
 
 import fantas
 from fantas import uimanager as u
 
 if fantas.PLATFORM == "Darwin":
-    u.ratio = 2
+    u.dpi_ratio = 2
 else:
-    u.ratio = 1
-
-fantas.PLATFORM
+    u.dpi_ratio = 1
 
 import pygame
 import pygame.freetype
@@ -52,11 +52,11 @@ title_ani = None
 title_text = None
 def load_start_ani():
     global title_ani, title_text
-    title_ani = fantas.Animation("./assets/ani/title.webp", center=(u.window.size[0] * u.ratio / 2, u.window.size[1] * u.ratio / 2))
+    title_ani = fantas.Animation("./assets/ani/title.webp", center=(u.window.size[0] * u.dpi_ratio / 2, u.window.size[1] * u.dpi_ratio / 2))
     title_ani.join_to(u.root, 0)
     title_ani.bind_stop_callback(title_ani.leave)
     title_ani.play(1)
-    author_sign = fantas.Text("Written By Fantastair", u.fonts['maplemono'], {'size': 20, 'fgcolor': colors.DARKBLUE, 'style': pygame.freetype.STYLE_OBLIQUE}, midbottom=(u.window.size[0] * u.ratio / 2, u.window.size[1] * u.ratio - 20))
+    author_sign = fantas.Text("Written By Fantastair", u.fonts['maplemono'], {'size': 20, 'fgcolor': colors.DARKBLUE, 'style': pygame.freetype.STYLE_OBLIQUE}, midbottom=(u.window.size[0] * u.dpi_ratio / 2, u.window.size[1] * u.dpi_ratio - 20))
     author_sign.join(u.root)
     author_sign.alpha = 0
     curve = fantas.SuperCurve(
@@ -77,10 +77,10 @@ def load_start_ani():
 
         def handle(self, event):
             if event.type == pygame.WINDOWSIZECHANGED:
-                self.ani.rect.center = (u.window.size[0] * u.ratio / 2, u.window.size[1] * u.ratio / 2)
+                self.ani.rect.center = (u.window.size[0] * u.dpi_ratio / 2, u.window.size[1] * u.dpi_ratio / 2)
                 if title_text is not None:
-                    title_text.rect.center = (u.window.size[0] * u.ratio / 2, u.window.size[1] * u.ratio / 2)
-                author_sign.rect.midbottom = (u.window.size[0] * u.ratio / 2, u.window.size[1] * u.ratio - 20)
+                    title_text.rect.center = (u.window.size[0] * u.dpi_ratio / 2, u.window.size[1] * u.dpi_ratio / 2)
+                author_sign.rect.midbottom = (u.window.size[0] * u.dpi_ratio / 2, u.window.size[1] * u.dpi_ratio - 20)
     TiTleAniWidget(title_ani).apply_event()
 pool.POOL.submit(load_start_ani)
 
@@ -89,7 +89,7 @@ _image.result()
 title_bar = title_bar.TitleBar()
 title_bar.join(u.root)
 
-title_text = fantas.Text("EICS", u.fonts['maplemono'], textstyle.TITLE_TEXT, center=(u.window.size[0] * u.ratio / 2, u.window.size[1] * u.ratio / 2))
+title_text = fantas.Text("EICS", u.fonts['maplemono'], textstyle.TITLE_TEXT, center=(u.window.size[0] * u.dpi_ratio / 2, u.window.size[1] * u.dpi_ratio / 2))
 title_text.join(u.root)
 title_text.alpha = 0
 tt_alpha_kf = fantas.UiKeyFrame(title_text, 'alpha', 255, 90, fantas.harmonic_curve)

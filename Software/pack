@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+set -e
+cd "$(dirname "$0")" || exit
+
+echo "=== MacOS环境自动打包脚本 ==="
+echo "- 需要python虚拟环境"
+echo "- 需要pygame-ce 2.5.5"
+echo "- 需要pyserial 3.5"
+echo "- 需要pyinstaller"
+echo "- 打包时可能需要输入y并按回车确认，用于清除缓存"
+
+read -rp "输入虚拟环境根目录: " VENV_PATH
+
+ACTIVATE_PATH="$VENV_PATH/bin/activate"
+
+if [[ ! -f "$ACTIVATE_PATH" ]]; then
+    echo "虚拟环境不存在: $ACTIVATE_PATH"
+    read -n 1 -s -r -p "输入任意内容结束..."
+    exit 1
+fi
+
+source "$ACTIVATE_PATH"
+
+pyinstaller main.spec --clean
+python after_pack.py
+
+echo "=== 打包完成 ==="
+read -n 1 -s -r -p "输入任意内容结束..."
+
