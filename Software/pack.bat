@@ -3,20 +3,20 @@ setlocal enabledelayedexpansion
 
 cd /d "%~dp0"
 
-echo === Windows çŽ¯å¢ƒè‡ªåŠ¨æ‰“åŒ…è„šæœ¬ ===
-echo - éœ€è¦ Python è™šæ‹ŸçŽ¯å¢ƒ
-echo - éœ€è¦ pygame-ce 2.5.5
-echo - éœ€è¦ pyserial 3.5
-echo - éœ€è¦ PyInstaller
-echo - æ‰“åŒ…æ—¶å¯èƒ½éœ€è¦è¾“å…¥ y å¹¶æŒ‰å›žè½¦ç¡®è®¤ï¼Œç”¨äºŽæ¸…é™¤ç¼“å­˜
+echo === Windows »·¾³×Ô¶¯´ò°ü½Å±¾ ===
+echo - ÐèÒª Python ÐéÄâ»·¾³
+echo - ÐèÒª pygame-ce 2.5.5
+echo - ÐèÒª pyserial 3.5
+echo - ÐèÒª PyInstaller
+echo - ´ò°üÊ±¿ÉÄÜÐèÒªÊäÈë y ²¢°´»Ø³µÈ·ÈÏ£¬ÓÃÓÚÇå³ý»º´æ
 echo.
 
-set /p VENV_PATH=è¯·è¾“å…¥è™šæ‹ŸçŽ¯å¢ƒæ ¹ç›®å½•: 
+set /p VENV_PATH=ÇëÊäÈëÐéÄâ»·¾³¸ùÄ¿Â¼: 
 
 set "ACTIVATE_PATH=%VENV_PATH%\Scripts\activate.bat"
 
 if not exist "%ACTIVATE_PATH%" (
-    echo è™šæ‹ŸçŽ¯å¢ƒä¸å­˜åœ¨: %ACTIVATE_PATH%
+    echo ÐéÄâ»·¾³²»´æÔÚ: %ACTIVATE_PATH%
     pause
     exit /b 1
 )
@@ -26,5 +26,5 @@ call "%ACTIVATE_PATH%"
 pyinstaller main.spec --clean
 python after_pack.py
 
-echo === æ‰“åŒ…å®Œæˆ ===
+echo === ´ò°üÍê³É ===
 pause
