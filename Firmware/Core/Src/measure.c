@@ -224,21 +224,28 @@ int solve_system(float S_c, float S_r, float S_l, float K_c, float K_r, float K_
  */
 void Measure_AnalyzeTrack(TRACK_TYPE* track_type, float S_c, float S_r, float S_l, float K_c, float K_r, float K_l, float* theta, float* d, float* h)
 {
-    if (S_c > 500.0f && S_r < 10.0f && S_l < 10.0f)
+    if (S_c > 500.0f && S_r < 20.0f && S_l < 20.0f)
     {
         *track_type = STRAIGHT;
     }
-    else if (S_r < 2.0f && S_l > 250.0f)
+    else if (S_r < 5.0f && S_l > 150.0f)
     {
         *track_type = BEND;
     }
-    else if (S_l > 20.0f && S_r < 3.0f && S_c < 2000.0f)
+    else if (S_l > -20.0f && S_r < 3.0f && S_c < 2000.0f)
     {
         *track_type = ARC;
     }
     else
     {
         *track_type = NONE;
+    }
+    if (*track_type != STRAIGHT)
+    {
+        *theta = 0.0f;
+        *d = 0.0f;
+        *h = 0.0f;
+        return;
     }
 
     float angle_estimate = 0.0f;

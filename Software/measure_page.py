@@ -19,6 +19,8 @@ import debug_page
 PADDING = 40
 
 class MeasurePageButton(page_button.PageButton):
+    HEIGHT_CURVE = fantas.FormulaCurve("-0.022*(x-10)**2+2.5")
+    
     def __init__(self, title_bar, **anchor):
         super().__init__(title_bar, '检测', iconmap.MEASURE, **anchor)
         self.usable_rect = title_bar.get_usable_rect()
@@ -70,7 +72,7 @@ class MeasurePageButton(page_button.PageButton):
             self.boxes[0].draw_track_type(track_type)
             self.boxes[1].set_angle(angle)
             self.boxes[2].add_data(distance)
-            self.boxes[3].add_data(height)
+            self.boxes[3].add_data(round(MeasurePageButton.HEIGHT_CURVE.calc(height), 2))
 
         if self.running and link.state == 'success':
             time.sleep(0.2)
