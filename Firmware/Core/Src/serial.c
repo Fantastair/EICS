@@ -358,9 +358,10 @@ void Serial_HandleData(void)
     Measure_Wait();
     float S1, S2, S3;
     Measure_GetSensorOutput(&S1, &S2, &S3);
+    S1 -= 200.0f;
     TRACK_TYPE track_type;
     float angle, distance, height;
-    Measure_AnalyzeTrack(S1, S2, S3, &track_type, &angle, &distance, &height);
+    Measure_AnalyzeTrack(&track_type, S2, S3, S1, 12.0f, 12.0f, 12.0f, &angle, &distance, &height);
     int index = 0;
     index = Serial_AddString("TrackType: ", index);
     index = Serial_AddString(track_type == NONE ? "None" : track_type == STRAIGHT ? "Straight" : track_type == BEND ? "Bend" : "Arc", index);

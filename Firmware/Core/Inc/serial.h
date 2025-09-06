@@ -1,6 +1,8 @@
 #ifndef __HMI_H__
 #define __HMI_H__
 
+#include "main.h"
+
 extern uint8_t Serial_ReceiveBuffer[32];
 extern uint8_t Serial_ReceiveReadyFlag;
 

@@ -18,7 +18,7 @@ void Measure_Start(void);
 void Measure_Wait(void);
 void Measure_GetSensorOutput(float *S1, float *S2, float *S3);
 
-void Measure_AnalyzeTrack(float S1, float S2, float S3, TRACK_TYPE *track_type, float *angle, float *distance, float *height);
+void Measure_AnalyzeTrack(TRACK_TYPE* track_type, float S_c, float S_r, float S_l, float K_c, float K_r, float K_l, float* theta, float* d, float* h);
 
 float moving_average_filter(const uint16_t *data, int index, int size);
 

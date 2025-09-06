@@ -69,8 +69,8 @@ class MeasurePageButton(page_button.PageButton):
             height = float(match.group(4))
             self.boxes[0].draw_track_type(track_type)
             self.boxes[1].set_angle(angle)
-            self.boxes[2].add_data(distance * 1000)
-            self.boxes[3].add_data(height * 1000)
+            self.boxes[2].add_data(distance)
+            self.boxes[3].add_data(height)
 
         if self.running and link.state == 'success':
             time.sleep(0.2)

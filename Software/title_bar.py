@@ -172,7 +172,7 @@ class TitleBarWidget(fantas.MouseBase):
                             u.window.position = (p[0] + s[0] - u.window.size[0], p[1])
                     elif t_flag:
                         u.window.position = (p[0], p[1] + s[1] - u.window.size[1])
-            self.title_bar.normal_state = (u.window.position, u.window.size)
+                self.title_bar.normal_state = (u.window.position, u.window.size)
             self.title_bar.auto_set_width()
 
     def mousepress(self, pos, button):
