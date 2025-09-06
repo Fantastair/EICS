@@ -13,17 +13,16 @@ python --version >nul 2>&1 || (
     exit /b 1
 )
 
-:: 依赖版本（与 macOS 版保持一致）
 set "PYGAME_VERSION=2.5.5"
 set "PYSERIAL_VERSION=3.5"
 
 :menu
 echo.
-echo 选择操作（建议使用虚拟环境打包）：
-echo 1  输入已有虚拟环境根目录（内部必须包含 Scripts\activate.bat）
-echo 2  在当前目录自动创建虚拟环境（.venv，已存在可以重复使用）
-echo 3  使用全局环境（不推荐）
-echo 4  退出
+echo "选择操作（建议使用虚拟环境打包）："
+echo "1.输入已有虚拟环境根目录（内部必须包含 Scripts\activate.bat）"
+echo "2.在当前目录自动创建虚拟环境（.venv，已存在可以重复使用）"
+echo "3.使用全局环境（不推荐）"
+echo "4.退出"
 echo.
 
 set /p OPTION=请输入选项（1-4）: || goto menu
